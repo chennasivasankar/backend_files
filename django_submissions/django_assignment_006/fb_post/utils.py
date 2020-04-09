@@ -6,75 +6,95 @@ from django.db import *
 from .constants import *
 
 
+#Verification Functions
+
+def check_valid_user_id(user_id):
+    if(not(User.objects.filter(id=user_id).exists())):
+        raise InvalidUserException
+
+def check_valid_post_id(post_id):
+    if(not(Post.objects.filter(id=post_id).exists())):
+        raise InvalidPostException
+
+def check_valid_comment_id(comment_id):
+    if(not(Comment.objects.filter(id=comment_id).exists())):
+        raise InvalidCommentException
+
+
+def check_for_non_empty_post_content(post_content):
+    if(post_content==''):
+        raise InvalidPostContent
+    
+def check_for_non_empty_comment_content(comment_content):
+    if(comment_content==''):
+        raise InvalidCommentContent
+
+def check_for_non_empty_reply_content(reply_content):
+    if(reply_content==''):
+        raise InvalidReplyContent
+
+
 #Assignment-6
-
-
 
 
 #Task-2
 
 def create_post(user_id,post_content=''):
-    if(User.objects.filter(id=user_id).exists()):
-        if post_content!='':
-            post= Post.objects.create(
+    #Verification
+    check_valid_user_id(user_id)
+    check_for_non_empty_post_content(post_content)
+    
+    #Functionality
+    post= Post.objects.create(
             posted_by_id=user_id,
             posted_at=datetime.datetime.now(),
             content=post_content
             )
-        else:
-            raise InvalidPostContent
-    else:
-        raise InvalidUserException
-
     return post.id
 
 #Task-3
 
 def create_comment(user_id,post_id,comment_content=''):
+    #Verification
+    check_valid_user_id(user_id)
+    check_valid_post_id(post_id)
+    check_for_non_empty_comment_content(comment_content)
     
-    if User.objects.filter(id=user_id).exists():
-        if Post.objects.filter(id=post_id).exists():
-            if(comment_content!=''):
-                comment=Comment.objects.create(
+    #Functionality
+    comment=Comment.objects.create(
                         content=comment_content,
                         commented_at=datetime.datetime.now(),
                         commented_by_id=user_id,
                         post_id=post_id,
                     )
-            else:
-                raise InvalidCommentContent
-        else:
-            raise InvalidPostException
-    else:
-        raise InvalidUserException
-       
+
     return comment.id
 
 
 #Task-4
 
-def reply_to_comment(user_id, comment_id, reply_content):
-    if User.objects.filter(id=user_id).exists():
-        if reply_content != '':
-            try:
-                comment_obj=Comment.objects.get(id=comment_id)
-                if(comment_obj.parent_comment_id):
-                    parent_id=comment_obj.parent_comment_id
-                else:
-                    parent_id=comment_id
-                reply = Comment.objects.create(
-                        content=reply_content,
-                        commented_at=datetime.datetime.now(),
-                        commented_by_id=user_id,
-                        post_id=comment_obj.post_id,
-                        parent_comment_id=parent_id
-                    )
-            except Comment.DoesNotExist:
-                raise InvalidCommentException
+def reply_to_comment(user_id, comment_id, reply_content=''):
+    #Verification
+    check_valid_user_id(user_id)
+    check_for_non_empty_reply_content(reply_content)
+    
+    #Functionality
+    try:
+        comment_obj=Comment.objects.get(id=comment_id)
+        if(comment_obj.parent_comment_id):
+            parent_id=comment_obj.parent_comment_id
         else:
-            raise InvalidReplyContent
-    else:
-        raise InvalidUserException
+            parent_id=comment_id
+        reply = Comment.objects.create(
+                content=reply_content,
+                commented_at=datetime.datetime.now(),
+                commented_by_id=user_id,
+                post_id=comment_obj.post_id,
+                parent_comment_id=parent_id
+            )
+    except Comment.DoesNotExist:
+        raise InvalidCommentException
+        
     return reply.id
 
 
@@ -83,72 +103,67 @@ def reply_to_comment(user_id, comment_id, reply_content):
 #Task-5-Enum
 
 def react_to_post(user_id, post_id, reaction_type):
+    #Verification
+    check_valid_user_id(user_id)
+    check_valid_post_id(post_id)
+    
+    #Functionality
     prev_reaction=Reaction.objects.filter(
                         reacted_by_id=user_id,
                         post_id=post_id
                     )
-    if User.objects.filter(id=user_id).exists():
-        if Post.objects.filter(id=post_id).exists():
-            try:
-                ReactionEnum(reaction_type)
-            except ValueError:
-                raise InvalidReactionTypeException
-            else:
-                if prev_reaction and prev_reaction[0].reaction==reaction_type:
-                    prev_reaction[0].delete()
-                elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
-                    prev_reaction[0].reaction=reaction_type
-                    prev_reaction[0].reacted_at=datetime.datetime.now()
-                    prev_reaction[0].save()
-                else:    
-                    Reaction.objects.create(
-                        post_id=post_id,
-                        reaction=reaction_type,
-                        reacted_at=datetime.datetime.now(),
-                        reacted_by_id=user_id
-                        )
-            
-        else:
-            raise InvalidPostException
+    try:
+        ReactionEnum(reaction_type)
+    except ValueError:
+        raise InvalidReactionTypeException
     else:
-        raise InvalidUserException
-
-
+        if prev_reaction and prev_reaction[0].reaction==reaction_type:
+            prev_reaction[0].delete()
+        elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
+            prev_reaction[0].reaction=reaction_type
+            prev_reaction[0].reacted_at=datetime.datetime.now()
+            prev_reaction[0].save()
+        else:    
+            Reaction.objects.create(
+                post_id=post_id,
+                reaction=reaction_type,
+                reacted_at=datetime.datetime.now(),
+                reacted_by_id=user_id
+                )                
         
 
 #Task-6-Enum
 
 def react_to_comment(user_id, comment_id, reaction_type):
+    #Verification
+    check_valid_user_id(user_id)
+    check_valid_comment_id(comment_id)
+    
+    #Functionality
+    
     prev_reaction=Reaction.objects.filter(
                         reacted_by_id=user_id,
                         comment_id=comment_id
                     )
-    if User.objects.filter(id=user_id).exists():
-        if Comment.objects.filter(id=comment_id).exists():
-            try:
-                ReactionEnum(reaction_type)
-            except:
-                raise InvalidReactionTypeException
-            else:
-                if prev_reaction and prev_reaction[0].reaction==reaction_type:
-                    prev_reaction[0].delete()
-                elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
-                    prev_reaction[0].reaction=reaction_type
-                    prev_reaction[0].reacted_at=datetime.datetime.now()
-                    prev_reaction[0].save()
-                else:    
-                    Reaction.objects.create(
-                        comment_id=comment_id,
-                        reaction=reaction_type,
-                        reacted_at=datetime.datetime.now(),
-                        reacted_by_id=user_id
-                        )
-            
-        else:
-            raise InvalidCommentException
+    try:
+        ReactionEnum(reaction_type)
+    except:
+        raise InvalidReactionTypeException
     else:
-        raise InvalidUserException
-
+        if prev_reaction and prev_reaction[0].reaction==reaction_type:
+            prev_reaction[0].delete()
+        elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
+            prev_reaction[0].reaction=reaction_type
+            prev_reaction[0].reacted_at=datetime.datetime.now()
+            prev_reaction[0].save()
+        else:    
+            Reaction.objects.create(
+                comment_id=comment_id,
+                reaction=reaction_type,
+                reacted_at=datetime.datetime.now(),
+                reacted_by_id=user_id
+                )
+    
 
 #Task-7
 
@@ -159,34 +174,38 @@ def get_total_reaction_count():
 #Task-8
 
 def get_reaction_metrics(post_id):
-    if Post.objects.filter(id=post_id).exists():
-        reaction_metrics=Reaction.objects.filter(
+    #Verification
+    check_valid_post_id(post_id)
+    
+    #Functionality
+    reaction_metrics=Reaction.objects.filter(
                 post_id=2
             ).values_list(
                 'reaction'
             ).annotate(
                 Count('id')
                 ).order_by('-id__count')
-    else:
-        raise InvalidPostException
-    
+
     return dict(reaction_metrics)
 
 
 #Task-9
 
 def delete_post(user_id, post_id):
-    if not(User.objects.filter(id=user_id).exists()):
-        raise InvalidUserException
+    #Verification
+    check_valid_user_id(user_id)
+    
+    #Functionality
     try:
         post=Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        raise InvalidPostException
+    else:
         if(post.posted_by_id==user_id):
             post.delete()
         else:
             raise UserCannotDeletePostException
-    except Post.DoesNotExist:
-        raise InvalidPostException
-        
+    
 
 #Task-10
 
@@ -195,10 +214,10 @@ def get_posts_with_more_positive_reactions():
             post_id__isnull=False
         ).values('post_id').annotate(
             positive_reactions=Count('reaction',
-                filter=Q(reaction__in=ReactionEnum.positive_reactions())
+                filter=Q(reaction__in=PositiveReactionEnum.choices())
             ),
             negative_reactions=Count('reaction',
-                filter=Q(reaction__in=ReactionEnum.negative_reactions())
+                filter=Q(reaction__in=NegativeReactionEnum.choices())
             )
         ).filter(
             positive_reactions__gt=F('negative_reactions')
@@ -209,40 +228,42 @@ def get_posts_with_more_positive_reactions():
 #Task-11
 
 def get_posts_reacted_by_user(user_id):
-    if User.objects.filter(id=user_id).exists():
-        reacted_posts=Reaction.objects.filter(
+    #Verification
+    check_valid_user_id(user_id)
+    
+    #Functionality
+    reacted_posts=Reaction.objects.filter(
             reacted_by_id=user_id,
             post_id__isnull=False
             ).values_list(
                 'post_id',flat=True
             ).distinct()
-    else:
-        raise InvalidUserException
-    
+            
     return list(reacted_posts)
 
 
 #Task-12
 
 def get_reactions_to_post(post_id):
-    post_reactions_details=[]
-    if Post.objects.filter(id=post_id).exists():
-        post_reactions=Reaction.objects.filter(
-            post_id=post_id
-            ).select_related(
-                'reacted_by'
-                )
-        for post_reaction in post_reactions:
-            post_details={
-                'user_id':post_reaction.reacted_by_id,
-                'name':post_reaction.reacted_by.name,
-                'profile_pic':post_reaction.reacted_by.profile_pic,
-                'reaction':post_reaction.reaction
-            }
-            post_reactions_details.append(post_details)
-    else:
-        raise InvalidPostException
+    #Verification
+    check_valid_post_id(post_id)
     
+    #Functionality
+    post_reactions_details=[]
+    post_reactions=Reaction.objects.filter(
+        post_id=post_id
+        ).select_related(
+            'reacted_by'
+            )
+    for post_reaction in post_reactions:
+        post_details={
+            'user_id':post_reaction.reacted_by_id,
+            'name':post_reaction.reacted_by.name,
+            'profile_pic':post_reaction.reacted_by.profile_pic,
+            'reaction':post_reaction.reaction
+        }
+        post_reactions_details.append(post_details)
+
     return post_reactions_details
 
 

@@ -1,5 +1,5 @@
 from django.db import models
-
+from .constants import *
 # Create your models here.
 
 class User(models.Model):
@@ -55,7 +55,7 @@ class Reaction(models.Model):
         )
     reaction=models.CharField(
             max_length=100,
-            choices=reaction_choices
+            choices=ReactionEnum.choices_tuple()
         )
     reacted_at=models.DateTimeField()
     reacted_by=models.ForeignKey(User,
