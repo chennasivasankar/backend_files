@@ -2,36 +2,27 @@ from enum import Enum
 
 
 class ReactionEnum(Enum):
-    WOW=1
-    LIT=2
-    LOVE=3
-    HAHA=4
-    THUMBS_UP=5
-    THUMBS_DOWN=6
-    ANGRY=7
-    SAD=8
+    WOW='WOW'
+    LIT='LIT'
+    LOVE='LOVE'
+    HAHA="HAHA"
+    THUMBS_UP='THUMBS-UP'
+    THUMBS_DOWN='THUMBS-DOWN'
+    ANGRY='ANGRY'
+    SAD='SAD'
     
     
     @classmethod
     def reactions(cls):
-        return [
-            'WOW',
-            'LIT',
-            'LOVE',
-            'HAHA',
-            'THUMBS-DOWN',
-            'THUMBS-UP',
-            'ANGRY',
-            'SAD'
-            ]
+        return [reaction.value for reaction in ReactionEnum]
     
     @classmethod
     def positive_reactions(cls):
         return [
             'THUMBS-UP',
             'LIT',
-            'LOVE',
             'HAHA',
+            'LOVE',
             'WOW'
             ]
     
@@ -42,3 +33,15 @@ class ReactionEnum(Enum):
             'ANGRY',
             'THUMBS-DOWN'
             ]
+
+class PostiveReactionEnum(Enum):
+    THUMBS_UP='THUMBS-UP'
+    LIT='LIT'
+    HAHA='HAHA'
+    LOVE='LOVE'
+    WOW='WOW'
+
+class NegativeReactionEnum(Enum):
+    SAD='SAD'
+    ANGRY='ANGRY'
+    THUMBS_DOWN='THUMBS-DOWN'

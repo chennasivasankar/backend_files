@@ -3,6 +3,8 @@ import datetime
 from .exceptions import *
 from django.db.models import *
 from django.db import *
+from .constants import *
+
 
 #Assignment-6
 
@@ -76,23 +78,46 @@ def reply_to_comment(user_id, comment_id, reply_content):
 
 #Task-5
 
+# def react_to_post(user_id, post_id, reaction_type):
+#     reaction_list=ReactionEnum.reactions()
+#     prev_reaction=Reaction.objects.filter(
+#                         reacted_by_id=user_id,
+#                         post_id=post_id
+#                     )
+#     if User.objects.filter(id=user_id).exists():
+#         if Post.objects.filter(id=post_id).exists():
+#             if reaction_type in reaction_list:
+#                 if prev_reaction and prev_reaction[0].reaction==reaction_type:
+#                     prev_reaction[0].delete()
+#                 elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
+#                     prev_reaction[0].reaction=reaction_type
+#                     prev_reaction[0].reacted_at=datetime.datetime.now()
+#                     prev_reaction[0].save()
+#                 else:    
+#                     Reaction.objects.create(
+#                         post_id=post_id,
+#                         reaction=reaction_type,
+#                         reacted_at=datetime.datetime.now(),
+#                         reacted_by_id=user_id
+#                         )
+#             else:
+#                 raise InvalidReactionTypeException
+#         else:
+#             raise InvalidPostException
+#     else:
+#         raise InvalidUserException
+
+#Task-5-Enum
+
 def react_to_post(user_id, post_id, reaction_type):
-    reaction_list=['WOW',
-                'LIT',
-                'LOVE',
-                'HAHA',
-                'THUMBS-UP',
-                'THUMBS-DOWN',
-                'ANGRY',
-                'SAD'
-                ]
     prev_reaction=Reaction.objects.filter(
                         reacted_by_id=user_id,
                         post_id=post_id
                     )
     if User.objects.filter(id=user_id).exists():
         if Post.objects.filter(id=post_id).exists():
-            if reaction_type in reaction_list:
+            try:
+                ReactionEnum(reaction_type)
                 if prev_reaction and prev_reaction[0].reaction==reaction_type:
                     prev_reaction[0].delete()
                 elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
@@ -106,26 +131,20 @@ def react_to_post(user_id, post_id, reaction_type):
                         reacted_at=datetime.datetime.now(),
                         reacted_by_id=user_id
                         )
-            else:
+            except ValueError:
                 raise InvalidReactionTypeException
         else:
             raise InvalidPostException
     else:
         raise InvalidUserException
+
+
         
 
 #Task-6
 
 def react_to_comment(user_id, comment_id, reaction_type):
-    reaction_list=['WOW',
-                'LIT',
-                'LOVE',
-                'HAHA',
-                'THUMBS-UP',
-                'THUMBS-DOWN',
-                'ANGRY',
-                'SAD'
-                ]
+    reaction_list=ReactionEnum.reactions()
     prev_reaction=Reaction.objects.filter(
                         reacted_by_id=user_id,
                         comment_id=comment_id
@@ -199,16 +218,10 @@ def get_posts_with_more_positive_reactions():
             post_id__isnull=False
         ).values('post_id').annotate(
             positive_reactions=Count('reaction',
-                filter=Q(reaction='THUMBS-UP')|
-                        Q(reaction='LIT')|
-                        Q(reaction='LOVE')|
-                        Q(reaction='HAHA')|
-                        Q(reaction='WOW')
+                filter=Q(reaction__in=ReactionEnum.positive_reactions())
             ),
             negative_reactions=Count('reaction',
-                filter=Q(reaction='SAD')|
-                Q(reaction='ANGRY')|
-                Q(reaction='THUMBS-DOWN')
+                filter=Q(reaction__in=ReactionEnum.negative_reactions())
             )
         ).filter(
             positive_reactions__gt=F('negative_reactions')
@@ -217,6 +230,7 @@ def get_posts_with_more_positive_reactions():
 
 
 #Task-11
+
 def get_posts_reacted_by_user(user_id):
     if User.objects.filter(id=user_id).exists():
         reacted_posts=Reaction.objects.filter(
