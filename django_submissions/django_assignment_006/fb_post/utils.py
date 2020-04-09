@@ -9,6 +9,8 @@ from .constants import *
 #Assignment-6
 
 
+
+
 #Task-2
 
 def create_post(user_id,post_content=''):
@@ -76,36 +78,7 @@ def reply_to_comment(user_id, comment_id, reply_content):
     return reply.id
 
 
-#Task-5
 
-# def react_to_post(user_id, post_id, reaction_type):
-#     reaction_list=ReactionEnum.reactions()
-#     prev_reaction=Reaction.objects.filter(
-#                         reacted_by_id=user_id,
-#                         post_id=post_id
-#                     )
-#     if User.objects.filter(id=user_id).exists():
-#         if Post.objects.filter(id=post_id).exists():
-#             if reaction_type in reaction_list:
-#                 if prev_reaction and prev_reaction[0].reaction==reaction_type:
-#                     prev_reaction[0].delete()
-#                 elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
-#                     prev_reaction[0].reaction=reaction_type
-#                     prev_reaction[0].reacted_at=datetime.datetime.now()
-#                     prev_reaction[0].save()
-#                 else:    
-#                     Reaction.objects.create(
-#                         post_id=post_id,
-#                         reaction=reaction_type,
-#                         reacted_at=datetime.datetime.now(),
-#                         reacted_by_id=user_id
-#                         )
-#             else:
-#                 raise InvalidReactionTypeException
-#         else:
-#             raise InvalidPostException
-#     else:
-#         raise InvalidUserException
 
 #Task-5-Enum
 
@@ -118,6 +91,9 @@ def react_to_post(user_id, post_id, reaction_type):
         if Post.objects.filter(id=post_id).exists():
             try:
                 ReactionEnum(reaction_type)
+            except ValueError:
+                raise InvalidReactionTypeException
+            else:
                 if prev_reaction and prev_reaction[0].reaction==reaction_type:
                     prev_reaction[0].delete()
                 elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
@@ -131,8 +107,7 @@ def react_to_post(user_id, post_id, reaction_type):
                         reacted_at=datetime.datetime.now(),
                         reacted_by_id=user_id
                         )
-            except ValueError:
-                raise InvalidReactionTypeException
+            
         else:
             raise InvalidPostException
     else:
@@ -141,17 +116,20 @@ def react_to_post(user_id, post_id, reaction_type):
 
         
 
-#Task-6
+#Task-6-Enum
 
 def react_to_comment(user_id, comment_id, reaction_type):
-    reaction_list=ReactionEnum.reactions()
     prev_reaction=Reaction.objects.filter(
                         reacted_by_id=user_id,
                         comment_id=comment_id
                     )
     if User.objects.filter(id=user_id).exists():
         if Comment.objects.filter(id=comment_id).exists():
-            if reaction_type in reaction_list:
+            try:
+                ReactionEnum(reaction_type)
+            except:
+                raise InvalidReactionTypeException
+            else:
                 if prev_reaction and prev_reaction[0].reaction==reaction_type:
                     prev_reaction[0].delete()
                 elif prev_reaction and prev_reaction[0].reaction!=reaction_type:
@@ -165,8 +143,7 @@ def react_to_comment(user_id, comment_id, reaction_type):
                         reacted_at=datetime.datetime.now(),
                         reacted_by_id=user_id
                         )
-            else:
-                raise InvalidReactionTypeException
+            
         else:
             raise InvalidCommentException
     else:
