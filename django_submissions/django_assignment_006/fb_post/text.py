@@ -1,0 +1,290 @@
+from .models import *
+from datetime import datetime
+
+
+
+user_list=[
+    User(
+        name='Sankar',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='Kiran',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='Chinnu',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='Ravan',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='Jos',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-1',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-2',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-3',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-4',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-5',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-6',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-7',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-8',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-9',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-10',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-11',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-12',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-13',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-14',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-15',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-16',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+    User(
+        name='User-17',
+        profile_pic='https://images.app.goo.gl/hjUtrFXQsc8KtCYa8'
+        ),
+        
+    ]
+
+
+
+post_list=[
+    Post(
+        content='Happy New Year To all',
+        posted_at=datetime.now(),
+        posted_by_id=3,
+        ),
+    Post(
+        content='Stay Home,Keep Safe',
+        posted_at=datetime.now(),
+        posted_by_id=5,
+        ),
+    Post(
+        content="Don't Waste the time",
+        posted_at=datetime.now(),
+        posted_by_id=1,
+        ),
+    Post(
+        content='By posting content around it, you have an opportunity to interact with ... the week for you to to post',
+        posted_at=datetime.now(),
+        posted_by_id=4,
+        ),
+    Post(
+        content="Make thing productively",
+        posted_at=datetime.now(),
+        posted_by_id=2,
+        )
+    ]
+
+comment_list=[
+    Comment(
+        content='I will follow',
+        commented_at=datetime.now(),
+        commented_by_id=2,
+        post_id=2,
+        ),
+    Comment(
+        content='It is good idea.I will also follow',
+        commented_at=datetime.now(),
+        commented_by_id=5,
+        post_id=2,
+        parent_comment_id=1
+        ),
+    Comment(
+        content='Me too.Thanks for tiggering',
+        commented_at=datetime.now(),
+        commented_by_id=3,
+        post_id=2,
+        parent_comment_id=2
+        ),
+    Comment(
+        content='How you are making things are productively',
+        commented_at=datetime.now(),
+        commented_by_id=1,
+        post_id=5
+        ),
+    Comment(
+        content='I have same doubt',
+        commented_at=datetime.now(),
+        commented_by_id=3,
+        post_id=5
+        )
+    ]
+
+reaction_list=[
+    Reaction(
+        comment_id=1,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=2,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='SAD',
+        reacted_at=datetime.now(),
+        reacted_by_id=3,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='SAD',
+        reacted_at=datetime.now(),
+        reacted_by_id=4,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='HAHA',
+        reacted_at=datetime.now(),
+        reacted_by_id=1,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='ANGRY',
+        reacted_at=datetime.now(),
+        reacted_by_id=5,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=6,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=7,
+        ),
+    Reaction(
+        post_id=2,
+        reaction='LOVE',
+        reacted_at=datetime.now(),
+        reacted_by_id=8,
+        ),
+    Reaction(
+        post_id=3,
+        reaction='ANGRY',
+        reacted_at=datetime.now(),
+        reacted_by_id=9,
+        ),
+    Reaction(
+        post_id=3,
+        reaction='ANGRY',
+        reacted_at=datetime.now(),
+        reacted_by_id=10,
+        ),
+    Reaction(
+        post_id=3,
+        reaction='LOVE',
+        reacted_at=datetime.now(),
+        reacted_by_id=11,
+        ),
+    Reaction(
+        post_id=3,
+        reaction='SAD',
+        reacted_at=datetime.now(),
+        reacted_by_id=12,
+        ),
+    Reaction(
+        comment_id=1,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=13,
+        ),
+    Reaction(
+        comment_id=1,
+        reaction='ANGRY',
+        reacted_at=datetime.now(),
+        reacted_by_id=14,
+        ),
+    Reaction(
+        comment_id=1,
+        reaction='LOVE',
+        reacted_at=datetime.now(),
+        reacted_by_id=15,
+        ),
+    Reaction(
+        comment_id=3,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=16,
+        ),
+    Reaction(
+        comment_id=3,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=17,
+        ),
+    Reaction(
+        comment_id=3,
+        reaction='LOVE',
+        reacted_at=datetime.now(),
+        reacted_by_id=18,
+        ),
+    Reaction(
+        comment_id=4,
+        reaction='WOW',
+        reacted_at=datetime.now(),
+        reacted_by_id=19,
+        ),
+    Reaction(
+        comment_id=4,
+        reaction='SAD',
+        reacted_at=datetime.now(),
+        reacted_by_id=20,
+        ),
+    
+    ]
+
+User.objects.bulk_create(user_list)
+Post.objects.bulk_create(post_list)
+Comment.objects.bulk_create(comment_list)
+Reaction.objects.bulk_create(reaction_list)
